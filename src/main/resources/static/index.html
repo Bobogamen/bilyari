@@ -1,0 +1,36 @@
+<!Doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<h2>Bilyari</h2>
+<div id="dataContainer">
+</div>
+<button onclick="getData()">Get Data</button>
+
+<script>
+    const getData = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/pumps', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            const data = await response.json();
+            console.log('Data retrieved successfully:', data);
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
+    };
+</script>
+<!--<script src="/service.js"></script>-->
+</body>
+</html>
