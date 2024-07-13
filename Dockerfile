@@ -1,11 +1,14 @@
-# Use an OpenJDK image with JDK 17 for the runtime stage
-FROM openjdk:17-jdk-slim
-
-# Set the working directory
+FROM eclipse-temurin:20-jdk AS build
+COPY . /app
 WORKDIR /app
+RUN chmod +x gradlew
+RUN ./gradlew bootJar
+RUN mv -f build/libs/*.jar app.jar
 
-# Copy application JAR file
-COPY build/libs/*.jar app.jar
-
-# Specify the command to run on container start
-CMD ["java", "-jar", "app.jar"]
+FROM eclipse-temurin:20-jre
+ARG PORT
+ENV PORT=${PORT}
+COPY --from=build /app/app.jar .
+RUN useradd runtime
+USER runtime
+ENTRYPOINT [ "java", "-Dserver.port=${PORT}", "-jar", "app.jar" ]
