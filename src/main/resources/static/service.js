@@ -1,7 +1,7 @@
 // Function to fetch data from the server
 async function fetchData() {
     try {
-        const response = await fetch('http://localhost:8080/pumps'); // Replace with your server URL
+        const response = await fetch('https://bilyari.onrender.com/pumps'); // Replace with your server URL
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
