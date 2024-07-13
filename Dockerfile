@@ -14,12 +14,29 @@
 #ENTRYPOINT [ "java", "-Dserver.port=${PORT}", "-jar", "app.jar" ]
 
 # Build stage
-FROM maven:3.8.4-openjdk-11 AS build
+FROM gradle:7.4.2-jdk11 AS build
+
+# Set the working directory in the container
 WORKDIR /app
-COPY . .
-RUN mvn clean package
+
+# Copy Gradle wrapper and project files
+COPY gradle /app/gradle
+COPY gradlew /app/gradlew
+COPY build.gradle /app/build.gradle
+COPY settings.gradle /app/settings.gradle
+
+# Copy the source code
+COPY src /app/src
+
+# Run Gradle build
+RUN ./gradlew build
 
 # Runtime stage
 FROM openjdk:11-jre-slim
-COPY --from=build /app/target/myapp.jar /app/myapp.jar
-ENTRYPOINT ["java", "-jar", "/app/myapp.jar"]
+
+# Copy the built jar file from the build stage
+COPY --from=build /app/build/libs/your-app.jar /app/your-app.jar
+
+# Set the entry point to run the jar
+ENTRYPOINT ["java", "-jar", "/app/your-app.jar"]
+
