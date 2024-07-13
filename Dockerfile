@@ -48,8 +48,9 @@
 #RUN useradd runtime
 #USER runtime
 #ENTRYPOINT [ "java", "-Dserver.port=${PORT}", "-jar", "app.jar" ]
-# Stage 1: Build the application
 
+
+# Stage 1: Build the application
 FROM eclipse-temurin:17-jdk-alpine AS build
 
 # Set working directory
@@ -62,7 +63,7 @@ COPY build.gradle /app/
 COPY settings.gradle /app/
 
 # Ensure the gradlew script is executable
-RUN chmod +x /app/gradlew
+RUN chmod +x gradlew
 
 # Download dependencies without running other tasks to cache them
 RUN ./gradlew --no-daemon dependencies
