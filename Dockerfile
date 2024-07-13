@@ -62,14 +62,17 @@ COPY gradle /app/gradle
 COPY build.gradle /app/
 COPY settings.gradle /app/
 
+# Copy the rest of the project
+COPY . /app
+
 # Ensure the gradlew script is executable
 RUN chmod +x gradlew
 
 # Download dependencies without running other tasks to cache them
 RUN ./gradlew --no-daemon dependencies
 
-# Copy the rest of the project
-COPY . /app
+# Ensure the gradlew script is executable
+RUN chmod +x gradlew
 
 # Build the application
 RUN ./gradlew --no-daemon bootJar
