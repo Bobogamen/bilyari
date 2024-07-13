@@ -1,6 +1,6 @@
 package com.bilyari.model;
 
-public class Pump {
+public class Pump implements Comparable<Pump> {
 
     private int id;
     private String name;
@@ -31,5 +31,10 @@ public class Pump {
 
     public void setValue(double value) {
         this.value = value;
+    }
+
+    @Override
+    public int compareTo(Pump o) {
+        return 0;
     }
 }

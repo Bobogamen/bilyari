@@ -1,21 +1,47 @@
-<!Doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Bilyari</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
 <h2>Bilyari</h2>
 <div id="dataContainer">
+    <table id="dataTable">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Table rows will be populated dynamically -->
+        </tbody>
+    </table>
 </div>
 <button onclick="getData()">Get Data</button>
 
 <script>
     const getData = async () => {
         try {
-            const response = await fetch('https://blr-jxyy.onrender.com/pumps', {
+            const response = await fetch('http://localhost:8080/pumps', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -26,11 +52,25 @@
             }
             const data = await response.json();
             console.log('Data retrieved successfully:', data);
+            populateTable(data); // Call function to populate table with data
         } catch (error) {
             console.error('There was a problem with the fetch operation:', error);
         }
     };
+
+    const populateTable = (data) => {
+        const tableBody = document.querySelector('#dataTable tbody');
+        tableBody.innerHTML = ''; // Clear existing table rows
+        data.forEach(pump => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                    <td>${pump.id}</td>
+                    <td>${pump.name}</td>
+                    <td>${pump.value}</td>
+                `;
+            tableBody.appendChild(row);
+        });
+    };
 </script>
-<!--<script src="/service.js"></script>-->
 </body>
 </html>
