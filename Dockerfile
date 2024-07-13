@@ -1,17 +1,52 @@
-FROM gradle:7.4.2-jdk11 AS build
-COPY . /app
-WORKDIR /app
-RUN chmod +x gradlew
-RUN ./gradlew bootJar
-RUN mv -f build/libs/*.jar app.jar
+#FROM gradle:7.4.2-jdk11 AS build
+#COPY . /app
+#WORKDIR /app
+#RUN chmod +x gradlew
+#RUN ./gradlew bootJar
+#RUN mv -f build/libs/*.jar app.jar
+#
+#FROM gradle:7.4.2-jdk11
+#ARG PORT
+#ENV PORT=${PORT}
+#COPY --from=build /app/app.jar .
+#RUN useradd runtime
+#USER runtime
+#ENTRYPOINT [ "java", "-Dserver.port=${PORT}", "-jar", "app.jar" ]
 
-FROM gradle:7.4.2-jdk11
+# Build stage
+FROM gradle:7.4.2-jdk11 AS build
+
+# Copy the project files
+COPY . /app
+
+# Set the working directory
+WORKDIR /app
+
+# Ensure the Gradle wrapper is executable
+RUN chmod +x gradlew
+
+# Build the project and generate the jar file
+RUN ./gradlew bootJar
+
+# Runtime stage
+FROM openjdk:11-jre-slim
+
+# Set an argument for the port
 ARG PORT
 ENV PORT=${PORT}
-COPY --from=build /app/app.jar .
-RUN useradd runtime
+
+# Copy the jar file from the build stage
+COPY --from=build /app/build/libs/*.jar /app/app.jar
+
+# Create a non-root user to run the application
+RUN useradd -m runtime
+
+# Change to the runtime user
 USER runtime
-ENTRYPOINT [ "java", "-Dserver.port=${PORT}", "-jar", "app.jar" ]
+
+# Set the entrypoint to run the jar
+ENTRYPOINT ["java", "-Dserver.port=${PORT}", "-jar", "/app/app.jar"]
+
 
 
 
